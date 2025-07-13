@@ -2,6 +2,7 @@
 import { useWindowSize } from "@/lib/useWindowSize";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import Magnetic from "./Magnetic";
 
 const navOptions = [
   "Home",
@@ -62,7 +63,7 @@ const Navbar = () => {
         <div className="flex gap-4">
           {navOptions.map((option, index) => (
             <div key={index} className="text-lg font-bold text-white">
-              {option}
+              <Magnetic>{option}</Magnetic>
             </div>
           ))}
         </div>

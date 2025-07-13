@@ -2,13 +2,15 @@
 
 import Navbar from "@/components/Navbar";
 import SectionWrapper from "@/components/SectionWrapper";
+import { useHover } from "@/lib/useHover";
+import { useMousePosition } from "@/lib/useMousePosition";
+import { motion } from "framer-motion";
 import Lenis from "lenis";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
-import { useMousePosition } from "@/lib/useMousePosition";
 
 export default function Home() {
   const { x, y } = useMousePosition();
+  const { isHovered } = useHover();
   const size = 20;
   useEffect(() => {
     const lenis = new Lenis({
@@ -20,13 +22,16 @@ export default function Home() {
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
+
   }, []);
   return (
     <>
+
       <motion.div
         animate={{
           x: x - size,
           y: y - size,
+          scale: isHovered ? 3 : 1,
         }}
         style={{
           position: "fixed",

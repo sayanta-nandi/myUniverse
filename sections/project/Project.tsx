@@ -2,10 +2,18 @@ import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useWindowSize } from "@/lib/useWindowSize";
 import { useRef } from "react";
-
-const PROJECTS = ["CaseCobra", "Tomato", "8puzzle", "Ai Notion"];
+import { useHover } from "@/lib/useHover";
+import { useIsMobile } from "@/lib/useIsMobile";
+import { projects } from "@/data/projects";
+import Image from "next/image";
+import Button from "./Button";
+import { GitBranchPlus, Github, LayoutPanelLeft } from "lucide-react";
+import Link from "next/link";
+import Magnetic from "@/components/Magnetic";
 
 const Project = () => {
+  const { setIsHovered } = useHover();
+  const isMobile = useIsMobile();
   const vh = 6;
   const { height, width } = useWindowSize();
   const ref = useRef<HTMLDivElement>(null);
@@ -29,21 +37,27 @@ const Project = () => {
   return (
     <div
       ref={ref}
-      className="h-[500vh] w-full text-white text-4xl font-bold relative overflow-hidden"
+      className="h-[500vh] w-full font-bold relative overflow-hidden"
       style={{
         backgroundColor: "#1E3E62",
+        color: "#FFA500",
       }}
     >
       <motion.div
         className="h-[100vh] w-full flex justify-center items-center"
         style={{
           fontSize: width / 15,
-          translateY: y,
-          translateX: x,
-          scale: scale,
+          translateY: isMobile ? 0 : y,
+          translateX: isMobile ? 0 : x,
+          scale: isMobile ? 1 : scale,
         }}
       >
-        Projects
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          Projects
+        </div>
       </motion.div>
       <div
         className="flex flex-col items-center justify-between"
@@ -51,22 +65,81 @@ const Project = () => {
           position: "absolute",
           bottom: 0,
           left: 0,
-          width: "50%",
+          width: isMobile ? "100%" : "50%",
           height: "400vh",
         }}
       >
-        {PROJECTS.map((p, idx) => (
+        {projects.map((p, idx) => (
           <div
-            key={p}
+            key={p.title}
             className="flex flex-col justify-center items-center w-11/12 aspect-square p-10"
           >
             <motion.div
               style={{
                 translateY: yvalues[idx],
+                borderColor: "#FFA500",
               }}
-              className="border border-white size-full flex justify-center items-center"
+              className="border size-full flex flex-col justify-between gap-4 p-4 relative"
             >
-              {p}
+              <div className="w-full h-7/12 relative">
+                <Image
+                  alt="projects"
+                  src={p.image}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 text-sm">
+                {p.tech.map((t) => (
+                  <Magnetic key={t}>
+                    <div className="px-2 hover:cursor-default select-none flex justify-center items-center border rounded-2xl">
+                      {t}
+                    </div>
+                  </Magnetic>
+                ))}
+              </div>
+              <div className="flex flex-col gap-2 w-full">
+                <h4 className="text-2xl">{p.title}</h4>
+                <p className="text-sm">{p.smdesc}</p>
+              </div>
+              <div className="flex justify-between gap-4">
+                <Link
+                  className="size-full"
+                  href={p.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Magnetic>
+                    <Button>
+                      Github
+                      <Github
+                        className="size-6 ml-2"
+                        style={{
+                          fill: "#FFA500",
+                        }}
+                      />
+                    </Button>
+                  </Magnetic>
+                </Link>
+                <Link
+                  className="size-full"
+                  href={p.app}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Magnetic>
+                    <Button>
+                      App
+                      <LayoutPanelLeft
+                        className="size-6 ml-2"
+                        style={{
+                          fill: "#FFA500",
+                        }}
+                      />
+                    </Button>
+                  </Magnetic>
+                </Link>
+              </div>
             </motion.div>
           </div>
         ))}

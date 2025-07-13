@@ -1,4 +1,5 @@
 "use client";
+import { useHover } from "@/lib/useHover";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { useWindowSize } from "@/lib/useWindowSize";
 import { useScroll, useTransform, motion } from "framer-motion";
@@ -7,6 +8,7 @@ import { useRef } from "react";
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { setIsHovered } = useHover();
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start end", "end start"],
@@ -48,6 +50,8 @@ const Hero = () => {
           style={{
             translateY: py,
           }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
           Hey, I'm <span className="text-green-500">Sayanta Nandi</span>
         </motion.p>
@@ -55,6 +59,8 @@ const Hero = () => {
           style={{
             fontSize: width / 17,
           }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
           I'm a <span className="text-green-500">Web Developer</span>
         </motion.p>
@@ -63,6 +69,8 @@ const Hero = () => {
             translateY: py1,
             fontSize: width / 20,
           }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
           I build cool <span className="text-green-500">Web Applications</span>
         </motion.p>
