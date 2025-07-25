@@ -13,6 +13,11 @@ export default function Home() {
   const { isHovered } = useHover();
   const size = 20;
   useEffect(() => {
+    document.querySelector("main")?.classList.add("scroll-lock");
+    setTimeout(() => {
+      document.querySelector("main")?.classList.remove("scroll-lock");
+    }, 4000);
+
     const lenis = new Lenis({
       lerp: 0.1,
     });
@@ -22,11 +27,10 @@ export default function Home() {
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
-
   }, []);
-  return (
-    <>
 
+  return (
+    <main className="w-full h-[100vh]">
       <motion.div
         animate={{
           x: x - size,
@@ -48,6 +52,6 @@ export default function Home() {
       />
       <Navbar />
       <SectionWrapper />
-    </>
+    </main>
   );
 }

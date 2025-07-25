@@ -1,122 +1,109 @@
-import { useHover } from "@/lib/useHover";
+import { SKILLS } from "@/data/skills";
 import { useWindowSize } from "@/lib/useWindowSize";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import SkillBox from "./SkillBox";
 
-const SKILLS = [
-  {
-    name: "Java",
-    icon: "/java.svg",
-    invert: true,
-  },
-  {
-    name: "JavaScript",
-    icon: "/js.svg",
-    invert: false,
-  },
-  {
-    name: "HTML",
-    icon: "/html.svg",
-    invert: false,
-  },
-  {
-    name: "CSS",
-    icon: "/css.svg",
-    invert: false,
-  },
-  {
-    name: "ReactJS",
-    icon: "/react.svg",
-    invert: true,
-  },
-  {
-    name: "MySQL",
-    icon: "/mysql.svg",
-    invert: true,
-  },
-  {
-    name: "MongoDB",
-    icon: "/mongodb.svg",
-    invert: true,
-  },
-  {
-    name: "PostgreSQL",
-    icon: "/postgre.svg",
-    invert: true,
-  },
-  {
-    name: "Prisma",
-    icon: "/prism.svg",
-    invert: true,
-  },
-];
-
 const Skill = () => {
-  const { width, height } = useWindowSize();
-  const { setIsHovered } = useHover();
   const ref = useRef<HTMLDivElement>(null);
+  const { height, width } = useWindowSize();
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, height / 2 + width / 30]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
-  const opacity = useTransform(
+  const refheight = ref.current
+    ? ref.current.getBoundingClientRect().height
+    : 0;
+
+  const offsety = width - height < -96 ? 48 : 8;
+  const offsetx1 = width < height ? "0%" : "10%";
+  const offsetx2 = width < height ? "0%" : "20%";
+
+  const y0 = useTransform(scrollYProgress, [0, 1], [0, refheight - height]);
+  const x1 = useTransform(scrollYProgress, [0, 1 / 5], ["150%", "0%"]);
+  const y1 = useTransform(scrollYProgress, [1 / 5, 1], [0, height * 4]);
+  const x2 = useTransform(scrollYProgress, [2 / 5, 3 / 5], ["150%", offsetx1]);
+  const y2 = useTransform(
     scrollYProgress,
-    [0, 0.1, 0.2, 0.3],
-    [0, 1, 1, 0]
+    [2 / 5, 3 / 5, 1],
+    [0, offsety, height * 2 + offsety]
   );
+  const x3 = useTransform(scrollYProgress, [4 / 5, 5 / 5], ["150%", offsetx2]);
+  const y3 = useTransform(scrollYProgress, [4 / 5, 1], [0, offsety * 2]);
+
+  const x = [x1, x2, x3];
+  const y = [y1, y2, y3];
+
   return (
     <div
       ref={ref}
-      className="h-[200vh] w-full"
+      className="relative w-full overflow-x-hidden overflow-y-visible"
       style={{
         backgroundColor: "#144C52",
+        color: "white",
       }}
     >
-      <div className="relative h-[100vh] w-full text-white flex justify-center items-center">
-        <motion.div
-          className="select-none font-bold"
-          style={{
-            fontSize: width / 15,
-            y,
-            scale,
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          Skills
-        </motion.div>
-        <motion.div
-          className="absolute text-white"
-          style={{
-            top: width / 15 + height / 2,
-            fontSize: width / 36,
-            opacity,
-          }}
-        >
-          What I've Learned and used in projects
-        </motion.div>
-      </div>
-      <div className="h-[100vh] w-full p-24">
-        <div className="border flex flex-wrap border-white w-full h-full p-8 space-x-8 space-y-8">
-          {SKILLS.map((skill) => (
-            <SkillBox
-              key={skill.name}
-              skill={skill.name}
-              icon={`/skills/${skill.icon}`}
-              invert={skill.invert}
-            />
-          ))}
+      <motion.div
+        style={{
+          zIndex: 0,
+          y: y0,
+        }}
+        className={`w-full absolute top-0 left-0 py-8 lg:py-48 lg:px-12 lg:text-6xl flex items-center justify-end px-8 text-4xl font-bold md:py-16`}
+      >
+        <div className="relative">
+          <motion.p
+            initial={{
+              translateY: "100%",
+            }}
+            whileInView={{
+              translateY: 0,
+            }}
+            viewport={{
+              margin: "0px 0px -300px 0px",
+              once: true,
+            }}
+            transition={{
+              duration: 1,
+              ease: "easeInOut",
+            }}
+          >
+            Skills
+          </motion.p>
+          <div
+            style={{ zIndex: 1 }}
+            className="absolute w-full h-full bg-[#144C52] top-[100%]"
+          />
         </div>
-      </div>
+      </motion.div>
+      {SKILLS.map((sk, idx) => (
+        <div key={sk.type}>
+          <div className="w-full h-screen" />
+          <div className="w-full h-screen relative pb-8 pt-24 px-8">
+            <motion.div
+              style={{ x: x[idx], y: y[idx] }}
+              className={` border border-white/20 bg-white/10 backdrop-blur-xl relative ${
+                width < height ? "w-full" : "h-full"
+              }  aspect-square shrink-0`}
+            >
+              <div className="flex flex-wrap mx-auto max-w-full max-h-full px-8 py-4 gap-8">
+                <div className="w-full font-semibold text-lg">
+                  {sk.type.toUpperCase()}
+                </div>
+                {sk.skills.map((skill) => (
+                  <SkillBox
+                    key={skill.name}
+                    skill={skill.name}
+                    icon={`/skills/${skill.icon}`}
+                    invert={skill.invert}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
